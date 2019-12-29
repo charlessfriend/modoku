@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'box.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -23,27 +25,70 @@ class Modoku extends StatefulWidget {
 }
 
 class _ModokuState extends State<Modoku> {
+
+  Box box1;
+  Box box2;
+  Box box3;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Modoku'),),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey,
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 8,
-                  ),
-                ),
-              )
-            ],
-          ),
-      ],),
+      body: FocusScope(
+        autofocus: true,
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                buildSection(Colors.grey.shade300),
+                buildSection(),
+                buildSection(Colors.grey.shade300),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                buildSection(),
+                buildSection(Colors.grey.shade300),
+                buildSection(),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                buildSection(Colors.grey.shade300),
+                buildSection(),
+                buildSection(Colors.grey.shade300),
+              ],
+            ),
+        ],),
+      ),
     );
   }
+  
+  Widget buildSection([Color sectionColor = Colors.white]){
+    return Expanded(
+      child: Container(
+        color: sectionColor,
+        child: Column(
+          children: <Widget>[
+            buildRow(),
+            buildRow(),
+            buildRow(),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Row buildRow() {
+    return Row(
+      children: <Widget>[
+        
+        Expanded(child: Box(3)),
+        Expanded(child: Box(3)),
+        Expanded(child: Box(3)),
+        
+      ],
+    );
+  }
+
 }
