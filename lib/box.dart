@@ -19,7 +19,6 @@ class Box extends StatelessWidget {
       Focus(
         onFocusChange: (focus){
             _hasFocus = _focusNode.hasFocus;
-            borderColor = _hasFocus ? Colors.green : Colors.black;
             if (_hasFocus) {
               onFocus(modokuBox);
             }
@@ -28,6 +27,7 @@ class Box extends StatelessWidget {
           builder: (BuildContext context) {
             _focusNode = Focus.of(context);
             _hasFocus = _focusNode.hasFocus;
+            borderColor = _hasFocus ? Colors.green : Colors.black;
             return GestureDetector(
               onTap: () {
                   _focusNode.requestFocus();

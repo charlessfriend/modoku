@@ -28,7 +28,8 @@ class Modoku extends StatefulWidget {
 class _ModokuState extends State<Modoku> {
 
   ModokuEngine _modokuEngine = ModokuEngine(3);
-
+  ModokuBox _selectedModokuBox;
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,19 +37,62 @@ class _ModokuState extends State<Modoku> {
       body: FocusScope(
         autofocus: true,
         child: Column(
-          children: 
-            buildSheet(),
-          )  
+          children: <Widget>[
+            ModokuSheet(_modokuEngine,
+              onSelectedBoxChanged: (modokuBox) => _selectedModokuBox = modokuBox ,),
+            Row(
+              children: buildAnswerButtons()
+              ,
+            ),
+          ],
+        )  
         ),
     );
   }
 
+  List<Widget> buildAnswerButtons() {
+    var answerButtons = List<Widget>();
+    for(int answer = 1; answer <= _modokuEngine.size * _modokuEngine.size; answer++){
+      answerButtons.add(
+        Expanded(
+          child: FlatButton(
+            child: Text(answer.toString()), 
+              onPressed: () {
+                setState(() {
+                  _selectedModokuBox.answer = answer;
+                });
+              },
+            ),
+        )
+      );
+    }
+    return answerButtons;
+  }
+
+  
+
+}
+
+class ModokuSheet extends StatelessWidget {
+  final ModokuEngine modokuEngine;
+  final ValueChanged<ModokuBox> onSelectedBoxChanged;
+
+  const ModokuSheet(this.modokuEngine, {@required this.onSelectedBoxChanged} );
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: 
+        buildSheet(),
+      );
+  }
+
   List<Row> buildSheet() {
     var rows = List<Row>(3);
-    for(int r = 0; r < _modokuEngine.size; r++ ) {
+    for(int r = 0; r < modokuEngine.size; r++ ) {
       var sections = List<Widget>();
-      for(int c = 0; c < _modokuEngine.size; c++ ) {
-        sections.add(buildSection(_modokuEngine.sections[r][c]));
+      for(int c = 0; c < modokuEngine.size; c++ ) {
+        sections.add(buildSection(modokuEngine.sections[r][c]));
       }
       rows[r] = Row(children: sections);
     }
@@ -75,9 +119,7 @@ class _ModokuState extends State<Modoku> {
         boxes.add(Expanded(
           child: Box(section.modokuBoxes[r][c], 
           onFocus: (modokuBox){
-            setState(() {
-              //modokuBox.answer = 4;
-            });
+            onSelectedBoxChanged(modokuBox);
           },),
         )
        );
@@ -87,5 +129,4 @@ class _ModokuState extends State<Modoku> {
     }
     return rows;
   }
-
 }
