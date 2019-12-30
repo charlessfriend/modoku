@@ -1,48 +1,28 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:modoku/modokuEngine.dart';
 
-class Box extends StatefulWidget {
-  final int size;
-  _BoxState _boxState;
-
-  Box(this.size);
-
-  @override
-  _BoxState createState() {
-      _boxState = _BoxState();
-     return _boxState;
-  }
-
-  unFocus(bool hasFocus) {
-    //_boxState.unFocus(hasFocus);
-    //print('focusChanged $size $hasFocus');
-  }
+class Box extends StatelessWidget {
   
-}
-    
-class _BoxState extends State<Box> {
-  List<bool> _pencilVisibility;
-  Color _borderColor = Colors.black;
-  bool _hasFocus;
-  FocusNode _focusNode;
+  final ModokuBox modokuBox;
+  final ValueChanged<ModokuBox> onFocus;
 
-  @override
-  void initState(){
-    super.initState();
-     _pencilVisibility = List<bool>(widget.size * widget.size);
-    _pencilVisibility = new List.generate(widget.size * widget.size, (i) => true);
-
-  }
+  Box(this.modokuBox, {this.onFocus});
 
   @override
   Widget build(BuildContext context) {
+    var _focusNode;
+    var _hasFocus = false;
+    var borderColor = Colors.black;
+
     return        
       Focus(
         onFocusChange: (focus){
-          setState(() {
             _hasFocus = _focusNode.hasFocus;
-            _borderColor = _hasFocus ? Colors.green : Colors.black;
-          });
+            borderColor = _hasFocus ? Colors.green : Colors.black;
+            if (_hasFocus) {
+              onFocus(modokuBox);
+            }
         },
         child: Builder(
           builder: (BuildContext context) {
@@ -50,16 +30,14 @@ class _BoxState extends State<Box> {
             _hasFocus = _focusNode.hasFocus;
             return GestureDetector(
               onTap: () {
-                setState(() {
                   _focusNode.requestFocus();
-                });
               },
               child: Stack(
                 children: <Widget>[
                   Container(
-                    width: 50,
-                    height: 50,
-                    decoration: getDecoration(),
+                    width: 45,
+                    height: 45,
+                    decoration: getDecoration(borderColor),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: getRows(),
@@ -68,8 +46,8 @@ class _BoxState extends State<Box> {
                   Visibility(
                     visible: true,
                     child: Center(
-                      child: AutoSizeText("5",
-                        style : TextStyle(fontSize: 40)
+                      child: AutoSizeText(modokuBox.answer.toString(),
+                        style : TextStyle(fontSize: 30)
                       ),
                     ),
                   )
@@ -81,44 +59,36 @@ class _BoxState extends State<Box> {
       );
   }
 
-  Decoration getDecoration() {
+  Decoration getDecoration(Color borderColor) {
     return BoxDecoration(
       color: Colors.transparent,
       border: Border.all(
-        color: _borderColor,
+        color: borderColor,
         width: 1,
         ),
       );
   }
 
   List<Row> getRows() {
-    var rows = List<Row>();
-    for(int i = 0; i < widget.size; i++) {
-      rows.add(Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: getPencils(i),
-          )
-      );
-    }
-    return rows;
-  }
-
-  List<Widget> getPencils(int rowNumber) {
-    var pencils = List<Visibility>();
-    var start = rowNumber * widget.size;
-    for(int i = start; i < start + widget.size; i++){
-      pencils.add(
-        Visibility(
-          visible: _pencilVisibility[i],
+    var rows = List<Row>(modokuBox.size);
+    for(int r = 0; r < modokuBox.size; r++) {
+      var notes = List<Visibility>();
+      for(int c = 0; c < modokuBox.size; c++) {
+        notes.add(Visibility(
+          visible: modokuBox.notes[r][c],
           child: Text(
-            (i + 1).toString(),
+            ((r * modokuBox.size) + (c + 1)).toString(),
             style: TextStyle(
               fontSize: 10
             ),
           )
-        )
-      );
+          )
+        );
+        rows[r] = Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: notes);
+      }
     }
-    return pencils;
+    return rows;
   }
 }

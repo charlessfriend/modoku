@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modoku/modokuEngine.dart';
 
 import 'box.dart';
 
@@ -26,9 +27,7 @@ class Modoku extends StatefulWidget {
 
 class _ModokuState extends State<Modoku> {
 
-  Box box1;
-  Box box2;
-  Box box3;
+  ModokuEngine _modokuEngine = ModokuEngine(3);
 
   @override
   Widget build(BuildContext context) {
@@ -37,58 +36,56 @@ class _ModokuState extends State<Modoku> {
       body: FocusScope(
         autofocus: true,
         child: Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                buildSection(Colors.grey.shade300),
-                buildSection(),
-                buildSection(Colors.grey.shade300),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                buildSection(),
-                buildSection(Colors.grey.shade300),
-                buildSection(),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                buildSection(Colors.grey.shade300),
-                buildSection(),
-                buildSection(Colors.grey.shade300),
-              ],
-            ),
-        ],),
-      ),
+          children: 
+            buildSheet(),
+          )  
+        ),
     );
   }
+
+  List<Row> buildSheet() {
+    var rows = List<Row>(3);
+    for(int r = 0; r < _modokuEngine.size; r++ ) {
+      var sections = List<Widget>();
+      for(int c = 0; c < _modokuEngine.size; c++ ) {
+        sections.add(buildSection(_modokuEngine.sections[r][c]));
+      }
+      rows[r] = Row(children: sections);
+    }
+    return rows;
+  }
   
-  Widget buildSection([Color sectionColor = Colors.white]){
+  Widget buildSection(ModokuSection modokuSection, [Color sectionColor = Colors.white]){
     return Expanded(
       child: Container(
         color: sectionColor,
         child: Column(
-          children: <Widget>[
-            buildRow(),
-            buildRow(),
-            buildRow(),
-          ],
+          children: 
+            buildBoxRow(modokuSection),
         ),
       ),
     );
   }
   
-  Row buildRow() {
-    return Row(
-      children: <Widget>[
-        
-        Expanded(child: Box(3)),
-        Expanded(child: Box(3)),
-        Expanded(child: Box(3)),
-        
-      ],
-    );
+  List<Row> buildBoxRow(ModokuSection section) {
+    var rows = List<Row>(section.size);
+    for(int r = 0; r < section.size; r++ ) {
+      var boxes = List<Expanded>();
+      for(int c = 0; c < section.size; c++ ) {
+        boxes.add(Expanded(
+          child: Box(section.modokuBoxes[r][c], 
+          onFocus: (modokuBox){
+            setState(() {
+              //modokuBox.answer = 4;
+            });
+          },),
+        )
+       );
+        rows[r] = Row(children: boxes);
+
+      }
+    }
+    return rows;
   }
 
 }
