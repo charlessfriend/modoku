@@ -33,6 +33,7 @@ class Box extends StatelessWidget {
                   _focusNode.requestFocus();
               },
               child: Stack(
+                alignment: AlignmentDirectional.center,
                 children: <Widget>[
                   Container(
                     width: 45,
@@ -47,7 +48,7 @@ class Box extends StatelessWidget {
                     visible: true,
                     child: Center(
                       child: AutoSizeText(modokuBox.answer.toString(),
-                        style : TextStyle(fontSize: 30)
+                        style : TextStyle(fontSize: 35)
                       ),
                     ),
                   )
@@ -75,11 +76,11 @@ class Box extends StatelessWidget {
       var notes = List<Visibility>();
       for(int c = 0; c < modokuBox.size; c++) {
         notes.add(Visibility(
-          visible: modokuBox.notes[r][c],
+          visible: modokuBox.notes[r][c] & modokuBox.showNotes,
           child: Text(
             ((r * modokuBox.size) + (c + 1)).toString(),
             style: TextStyle(
-              fontSize: 10
+              fontSize: 12
             ),
           )
           )

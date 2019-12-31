@@ -39,6 +39,10 @@ class ModokuBox {
   int correctAnswer = 5;
   int answer = 5;
 
+  bool get showNotes {
+    return answer < 1;
+  }
+
   ModokuBox(this.size){
     notes  = List<List<bool>>();
     for(int r = 0; r < size; r++ ) {

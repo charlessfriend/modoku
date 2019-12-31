@@ -56,7 +56,9 @@ class _ModokuState extends State<Modoku> {
       answerButtons.add(
         Expanded(
           child: FlatButton(
-            child: Text(answer.toString()), 
+            child: Text(answer.toString(),
+              style: TextStyle(fontSize: 45,)
+              ), 
               onPressed: () {
                 setState(() {
                   _selectedModokuBox.answer = answer;
@@ -69,8 +71,6 @@ class _ModokuState extends State<Modoku> {
     return answerButtons;
   }
 
-  
-
 }
 
 class ModokuSheet extends StatelessWidget {
@@ -81,14 +81,17 @@ class ModokuSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: Column(
       children: 
-        buildSheet(),
-      );
+      buildSheet(),
+      ),
+    );
   }
 
   List<Row> buildSheet() {
-    var rows = List<Row>(3);
+    var rows = List<Row>(modokuEngine.size);
     for(int r = 0; r < modokuEngine.size; r++ ) {
       var sections = List<Widget>();
       for(int c = 0; c < modokuEngine.size; c++ ) {
@@ -102,7 +105,11 @@ class ModokuSheet extends StatelessWidget {
   Widget buildSection(ModokuSection modokuSection, [Color sectionColor = Colors.white]){
     return Expanded(
       child: Container(
-        color: sectionColor,
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 1
+          )
+        ),
         child: Column(
           children: 
             buildBoxRow(modokuSection),
@@ -111,19 +118,24 @@ class ModokuSheet extends StatelessWidget {
     );
   }
   
-  List<Row> buildBoxRow(ModokuSection section) {
-    var rows = List<Row>(section.size);
+  List<Widget> buildBoxRow(ModokuSection section) {
+    var rows = List<Widget>(section.size);
     for(int r = 0; r < section.size; r++ ) {
       var boxes = List<Expanded>();
       for(int c = 0; c < section.size; c++ ) {
         boxes.add(Expanded(
-          child: Box(section.modokuBoxes[r][c], 
-          onFocus: (modokuBox){
-            onSelectedBoxChanged(modokuBox);
-          },),
+          child: FittedBox(
+            fit: BoxFit.fill,
+            child: Box(section.modokuBoxes[r][c], 
+            onFocus: (modokuBox){
+              onSelectedBoxChanged(modokuBox);
+            },),
+          ),
         )
        );
-        rows[r] = Row(children: boxes);
+        rows[r] = Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: boxes);
 
       }
     }
