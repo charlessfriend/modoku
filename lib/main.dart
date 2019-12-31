@@ -29,6 +29,7 @@ class _ModokuState extends State<Modoku> {
 
   ModokuEngine _modokuEngine = ModokuEngine(3);
   ModokuBox _selectedModokuBox;
+  bool _editMode = false;
   
   @override
   Widget build(BuildContext context) {
@@ -44,6 +45,30 @@ class _ModokuState extends State<Modoku> {
               children: buildAnswerButtons()
               ,
             ),
+            Row(
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.delete_outline,
+                    size: 45,),
+                  onPressed: (){
+                    setState(() {
+                      _selectedModokuBox.answer = '';
+                    });
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.edit,
+                    size: 45,
+                    color: _editMode ? Colors.redAccent[700] : Colors.black,
+                    ),
+                  onPressed: (){
+                    setState(() {
+                      _editMode = !_editMode;
+                    });
+                  },
+                ),
+              ],
+            )
           ],
         )  
         ),
@@ -61,7 +86,14 @@ class _ModokuState extends State<Modoku> {
               ), 
               onPressed: () {
                 setState(() {
-                  _selectedModokuBox.answer = answer;
+                  if (_editMode) {
+                    var row = (answer / _selectedModokuBox.size).ceil() - 1;
+                    var col = answer % _selectedModokuBox.size - 1;
+                    if (col == -1) col = 2;
+                    _selectedModokuBox.notes[row][col] = !_selectedModokuBox.notes[row][col];
+                  }
+                  else
+                    _selectedModokuBox.answer = answer.toString();
                 });
               },
             ),

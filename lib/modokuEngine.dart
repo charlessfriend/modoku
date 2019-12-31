@@ -36,11 +36,11 @@ class ModokuSection {
 class ModokuBox {
   int size;
   List<List<bool>> notes;
-  int correctAnswer = 5;
-  int answer = 5;
+  String correctAnswer = '5';
+  String answer = '';
 
   bool get showNotes {
-    return answer < 1;
+    return answer == '';
   }
 
   ModokuBox(this.size){

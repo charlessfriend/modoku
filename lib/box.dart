@@ -47,7 +47,7 @@ class Box extends StatelessWidget {
                   Visibility(
                     visible: true,
                     child: Center(
-                      child: AutoSizeText(modokuBox.answer.toString(),
+                      child: Text(modokuBox.answer,
                         style : TextStyle(fontSize: 35)
                       ),
                     ),
@@ -77,10 +77,13 @@ class Box extends StatelessWidget {
       for(int c = 0; c < modokuBox.size; c++) {
         notes.add(Visibility(
           visible: modokuBox.notes[r][c] & modokuBox.showNotes,
+          maintainSize: true,
+          maintainAnimation: true,
+          maintainState: true,
           child: Text(
             ((r * modokuBox.size) + (c + 1)).toString(),
             style: TextStyle(
-              fontSize: 12
+              fontSize: 10
             ),
           )
           )
